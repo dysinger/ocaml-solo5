@@ -1,4 +1,5 @@
 opam-version: "2.0"
+version: "1.2.2"
 maintainer: "Martin Lucina <martin@lucina.net>"
 authors: "Martin Lucina <martin@lucina.net>"
 homepage: "https://github.com/mirage/ocaml-solo5"
