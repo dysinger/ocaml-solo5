@@ -128,6 +128,9 @@ CFLAGS_add  += $(CFLAGS_arch)
 SFLAGS_add  += $(SFLAGS_arch)
 LDFLAGS_add += $(LDFLAGS_arch)
 
+# Define __strong_alias for toolchains that don't have it
+CFLAGS_add += -D__strong_alias\(a,b\)=__attribute__\(\(alias\(#b\)\)\)
+
 CFLAGS_add += -std=c99 -Wall -I$(OPENLIBM_HOME) -I$(OPENLIBM_HOME)/include -I$(OPENLIBM_HOME)/$(ARCH) -I$(OPENLIBM_HOME)/src -DASSEMBLER -D__BSD_VISIBLE -Wno-implicit-function-declaration
 ifneq ($(filter $(ARCH),i387 amd64 powerpc),)
 CFLAGS_add += -I$(OPENLIBM_HOME)/ld80
