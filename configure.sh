@@ -87,6 +87,9 @@ case "${TARGET_TRIPLET}" in
     arm64-apple-darwin*)
         TARGET_ARCH="aarch64"
         ;;
+    *-none)
+        TARGET_ARCH="$(echo "$CONFIG_TARGET" | cut -d'-' -f1)"
+        ;;
     *)
         die "Unsupported build architecture: ${TARGET_TRIPLET}"
         ;;
