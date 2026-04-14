@@ -1,4 +1,0 @@
-[submodule "openlibm"]
-	path = openlibm
-	url = https://github.com/dysinger/openlibm.git
-	branch = avh
