@@ -12,7 +12,7 @@
 gen_cc() {
   # Note that -nostdlib is not required, as it is injected by Solo5' cc, ld
 
-  CFLAGS="$TOOL_CFLAGS"
+  CFLAGS="$TOOL_CFLAGS -ffreestanding -nostdinc -isystem /usr/aarch64-linux-gnu/include"
   LDFLAGS="$TOOL_LDFLAGS"
   EXTRALIBS=""
 

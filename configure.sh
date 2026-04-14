@@ -87,6 +87,9 @@ case "${TARGET_TRIPLET}" in
     arm64-apple-darwin*)
         TARGET_ARCH="aarch64"
         ;;
+    aarch64-linux-gnu|arm64-linux-gnu)
+        TARGET_ARCH="aarch64"
+        ;;
     *-none|*_none)
         TARGET_ARCH="$(echo "$CONFIG_TARGET" | cut -d'-' -f1)"
         ;;
