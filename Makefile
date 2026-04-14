@@ -126,6 +126,7 @@ $(OCAML_IS_BUILT): ocaml/Makefile.config | _build
 	PATH="$$PWD/$(TOOLDIR_FOR_BUILD):$$PATH" ; \
 	cd ocaml && \
 	  $(MAKE) runtime-all OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
+	  cp runtime/ocamlrun boot/ocamlrun && \
 	  $(MAKE) ocamlc $(TOOLS_BYTECODE_TARGETS) OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
 	  $(MAKE) library OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
 	  $(MAKE) otherlibs all OLDS="-o yacc/ocamlyacc -o lex/ocamllex"
