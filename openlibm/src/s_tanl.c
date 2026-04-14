@@ -41,6 +41,8 @@
 #include "../ld80/e_rem_pio2l.h"
 #elif LDBL_MANT_DIG == 113
 #include "../ld128/e_rem_pio2l.h"
+#elif LDBL_MANT_DIG == 53
+#define tanl(x) tan((double)(x))
 #else
 #error "Unsupported long double format"
 #endif

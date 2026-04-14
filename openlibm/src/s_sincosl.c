@@ -19,6 +19,8 @@
 #include "../ld80/e_rem_pio2l.h"
 #elif LDBL_MANT_DIG == 113
 #include "../ld128/e_rem_pio2l.h"
+#elif LDBL_MANT_DIG == 53
+#define sincosl(x, s, c) do { double _d = (double)(x); sincos(_d, (double*)(s), (double*)(c)); } while(0)
 #else
 #error "Unsupported long double format"
 #endif
