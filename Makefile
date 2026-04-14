@@ -15,7 +15,7 @@ _build:
 LIBS := openlibm/libopenlibm.a nolibc/libnolibc.a
 
 # CFLAGS used to build the nolibc and openlibm libraries
-LIB_CFLAGS=-I$(TOP)/nolibc/include -include _solo5/overrides.h
+LIB_CFLAGS=-ffreestanding -I$(TOP)/nolibc/include -include _solo5/overrides.h
 
 # NOLIBC
 # Use a phony target indirection, so that nolibc/Makefile is always checked to
