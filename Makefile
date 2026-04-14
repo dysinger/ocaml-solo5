@@ -117,7 +117,6 @@ ocaml/Makefile.config: $(LIBS) $(TOOLCHAIN_FOR_BUILD) | ocaml
 		--disable-debug-runtime \
 		--disable-ocamltest \
 		--disable-ocamldoc \
-		--disable-native-compiler \
 		--without-zstd \
 		$(MAKECONF_OCAML_CONFIGURE_OPTIONS)
 
@@ -127,9 +126,9 @@ $(OCAML_IS_BUILT): ocaml/Makefile.config | _build
 	cd ocaml && \
 	  $(MAKE) runtime-all OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
 	  cp runtime/ocamlrun boot/ocamlrun && \
-	  $(MAKE) ocamlc $(TOOLS_BYTECODE_TARGETS) OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
-	  $(MAKE) library OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
-	  $(MAKE) otherlibs all OLDS="-o yacc/ocamlyacc -o lex/ocamllex"
+	  $(MAKE) library-cross OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
+	  $(MAKE) otherlibs all OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
+	  $(MAKE) runtimeopt OLDS="-o yacc/ocamlyacc -o lex/ocamllex"
 	touch $@
 
 # CONFIGURATION FILES
