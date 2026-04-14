@@ -49,11 +49,7 @@ $(error "the mingw32 compiler you are using fails the openblas testsuite. please
 endif
 
 # OS-specific stuff
-ifeq ($(findstring arm,$(ARCH)),arm)
-override ARCH := arm
-MARCH ?= armv7-a
-CFLAGS_add += -mhard-float
-endif
+# Check aarch64/arm64 BEFORE arm (since "arm" matches in "aarch64")
 ifeq ($(findstring aarch64,$(ARCH)),aarch64)
 override ARCH := aarch64
 MARCH ?= armv8-a
@@ -61,6 +57,11 @@ endif
 ifeq ($(findstring arm64,$(ARCH)),arm64)
 override ARCH := aarch64
 MARCH ?= armv8-a
+endif
+ifeq ($(findstring arm,$(ARCH)),arm)
+override ARCH := arm
+MARCH ?= armv7-a
+CFLAGS_add += -mhard-float
 endif
 ifeq ($(findstring powerpc,$(ARCH)),powerpc)
 override ARCH := powerpc
