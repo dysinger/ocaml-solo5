@@ -118,6 +118,7 @@ ocaml/Makefile.config: $(LIBS) $(TOOLCHAIN_FOR_BUILD) | ocaml
 		--disable-ocamltest \
 		--disable-ocamldoc \
 		--without-zstd \
+		--disable-native-compiler \
 		$(MAKECONF_OCAML_CONFIGURE_OPTIONS)
 
 OCAML_IS_BUILT := _build/ocaml_is_built
