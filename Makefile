@@ -98,6 +98,7 @@ ocaml:
 # create an ocaml-src subdirectory
 	test ! -d $@
 	cp -r "$$(ocamlfind query ocaml-src)" $@
+	chmod -R u+w $@  # Ensure sources are writable for patch application
 	VERSION="$$(head -n1 ocaml/VERSION)" ; \
 	if test -d "patches/$$VERSION" ; then \
 	  opatch -v -C $@ "patches/$$VERSION"/*; \
