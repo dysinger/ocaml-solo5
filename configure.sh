@@ -84,6 +84,9 @@ case "${TARGET_TRIPLET}" in
     aarch64-*)
         TARGET_ARCH="aarch64"
         ;;
+    arm64-apple-darwin*)
+        TARGET_ARCH="aarch64"
+        ;;
     *)
         die "Unsupported build architecture: ${TARGET_TRIPLET}"
         ;;
