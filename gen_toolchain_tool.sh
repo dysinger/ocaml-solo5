@@ -65,7 +65,7 @@ if [ -z "\$compiling" ]; then
 fi
 
 [ -n "\${__V}" ] && set -x
-exec "$SOLO5_TOOLCHAIN-cc" -ffreestanding "$@"
+exec "$SOLO5_TOOLCHAIN-cc" "$@"
 EOF
 }
 

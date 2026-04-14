@@ -56,12 +56,12 @@ TOOLDIR_FINAL := _build/toolchain
 TOOLCHAIN_FINAL := $(addprefix $(TOOLDIR_FINAL)/,$(ALLTOOLS))
 
 # Options for the build version of the tools
-TOOLCHAIN_BUILD_CFLAGS := -I$(TOP)/nolibc/include \
+TOOLCHAIN_BUILD_CFLAGS := -ffreestanding -I$(TOP)/nolibc/include \
   -I$(TOP)/openlibm/include -I$(TOP)/openlibm/src
 TOOLCHAIN_BUILD_LDFLAGS := -L$(TOP)/nolibc -L$(TOP)/openlibm
 
 # Options for the installed version of the tools
-TOOLCHAIN_FINAL_CFLAGS := -I$(MAKECONF_SYSROOT)/include
+TOOLCHAIN_FINAL_CFLAGS := -ffreestanding -I$(MAKECONF_SYSROOT)/include
 TOOLCHAIN_FINAL_LDFLAGS := -L$(MAKECONF_SYSROOT)/lib
 
 $(TOOLDIR_FOR_BUILD) $(TOOLDIR_FINAL):
