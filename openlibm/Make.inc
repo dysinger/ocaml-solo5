@@ -54,6 +54,14 @@ override ARCH := arm
 MARCH ?= armv7-a
 CFLAGS_add += -mhard-float
 endif
+ifeq ($(findstring aarch64,$(ARCH)),aarch64)
+override ARCH := aarch64
+MARCH ?= armv8-a
+endif
+ifeq ($(findstring arm64,$(ARCH)),arm64)
+override ARCH := aarch64
+MARCH ?= armv8-a
+endif
 ifeq ($(findstring powerpc,$(ARCH)),powerpc)
 override ARCH := powerpc
 endif
