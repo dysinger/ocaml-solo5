@@ -155,6 +155,8 @@ install-ocaml:
 	cp ocaml/runtime/caml/*.h "$(MAKECONF_SYSROOT)/lib/ocaml/caml/"
 	cp -r ocaml/stdlib "$(MAKECONF_SYSROOT)/lib/ocaml/"
 	cd "$(MAKECONF_SYSROOT)/lib/ocaml/stdlib" && ln -sf ../libcamlrun.a libcamlrun.a
+	# Install OCaml Makefile.config for dune
+	cp ocaml/Makefile.config "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	# Install compiler tools (native compiler only, no bytecode since --disable-native-compiler)
 	cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/bin/" 2>/dev/null || true
 	cp ocaml/ocamllex ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/bin/" 2>/dev/null || true
