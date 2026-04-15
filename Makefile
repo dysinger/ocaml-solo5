@@ -135,7 +135,7 @@ _build/solo5.conf: gen_solo5_conf.sh $(OCAML_IS_BUILT)
 	PREFIX="$(MAKECONF_PREFIX)" SYSROOT="$(MAKECONF_SYSROOT)" ./gen_solo5_conf.sh > $@
 
 _build/empty-META: | _build
-	touch $@
+	touch -t 197001010000 $@
 
 # INSTALL
 PACKAGES := $(basename $(wildcard *.opam))
