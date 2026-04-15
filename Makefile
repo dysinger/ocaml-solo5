@@ -168,23 +168,23 @@ install-ocaml:
 	cp ocaml/bytecomp/*.cmo ocaml/bytecomp/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp -r ocaml/lib "$(MAKECONF_SYSROOT)/lib/ocaml/ocamldoc" 2>/dev/null || true
 	# Create shell wrappers for bytecode tools
-	# Use printf to properly handle the $$ escaping for dirname
+	# Use absolute path to ocamlrun to avoid issues with dirname in nix sandbox
 	(cd "$(MAKECONF_SYSROOT)/bin" && \
 	for tool in ocamlc ocamllex ocamlyacc; do \
 		if [ -f "$$tool.byte" ]; then \
-			printf '#!/usr/bin/env sh\nexec "$$(dirname "$$0")/ocamlrun" "./%s.byte" "$$@"\n' "$$tool" > "$$tool"; \
+			printf '#!/usr/bin/env sh\nexec "%s/ocamlrun" "./%s.byte" "$$@"\n' "$(MAKECONF_SYSROOT)/bin" "$$tool" > "$$tool"; \
 			chmod +x "$$tool"; \
 		fi \
 	done)
 	if [ -f ocaml/ocamllex ]; then \
 		cp ocaml/ocamllex "$(MAKECONF_SYSROOT)/bin/ocamllex.byte"; \
 		cp ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/bin/ocamllex.byte"; \
-		printf '#!/usr/bin/env sh\nexec "$$(dirname "$$0")/ocamlrun" "./ocamllex.byte" "$$@"\n' > "$(MAKECONF_SYSROOT)/bin/ocamllex"; \
+		printf '#!/usr/bin/env sh\nexec "%s/ocamlrun" "./ocamllex.byte" "$$@"\n' "$(MAKECONF_SYSROOT)/bin" > "$(MAKECONF_SYSROOT)/bin/ocamllex"; \
 		chmod +x "$(MAKECONF_SYSROOT)/bin/ocamllex"; \
 	fi
 	if [ -f ocaml/yacc/ocamlyacc ]; then \
 		cp ocaml/yacc/ocamlyacc "$(MAKECONF_SYSROOT)/bin/ocamlyacc.byte"; \
-		printf '#!/usr/bin/env sh\nexec "$$(dirname "$$0")/ocamlrun" "./ocamlyacc.byte" "$$@"\n' > "$(MAKECONF_SYSROOT)/bin/ocamlyacc"; \
+		printf '#!/usr/bin/env sh\nexec "%s/ocamlrun" "./ocamlyacc.byte" "$$@"\n' "$(MAKECONF_SYSROOT)/bin" > "$(MAKECONF_SYSROOT)/bin/ocamlyacc"; \
 		chmod +x "$(MAKECONF_SYSROOT)/bin/ocamlyacc"; \
 	fi
 
