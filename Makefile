@@ -155,17 +155,17 @@ install-ocaml:
 	cp ocaml/runtime/caml/*.h "$(MAKECONF_SYSROOT)/lib/ocaml/caml/"
 	cp -r ocaml/stdlib "$(MAKECONF_SYSROOT)/lib/ocaml/"
 	cd "$(MAKECONF_SYSROOT)/lib/ocaml/stdlib" && ln -sf ../libcamlrun.a libcamlrun.a
-	# Install compiler tools
-	cp ocaml/ocamlc ocaml/ocamlc.byte "$(MAKECONF_SYSROOT)/bin/"
-	cp ocaml/ocamllex ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/bin/"
-	cp ocaml/yacc/ocamlyacc "$(MAKECONF_SYSROOT)/bin/"
-	cp ocaml/tools/*.cmo ocaml/tools/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/"
-	cp ocaml/utils/*.cmo ocaml/utils/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/"
-	cp ocaml/typing/*.cmo ocaml/typing/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/"
-	cp ocaml/driver/*.cmo ocaml/driver/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/"
-	cp ocaml/middle_end/*.cmo ocaml/middle_end/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/"
-	cp ocaml/bytecomp/*.cmo ocaml/bytecomp/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/"
-	cp -r ocaml/lib "$(MAKECONF_SYSROOT)/lib/ocaml/ocamldoc"
+	# Install compiler tools (native compiler only, no bytecode since --disable-native-compiler)
+	cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/bin/" 2>/dev/null || true
+	cp ocaml/ocamllex ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/bin/" 2>/dev/null || true
+	cp ocaml/yacc/ocamlyacc "$(MAKECONF_SYSROOT)/bin/" 2>/dev/null || true
+	cp ocaml/tools/*.cmo ocaml/tools/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
+	cp ocaml/utils/*.cmo ocaml/utils/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
+	cp ocaml/typing/*.cmo ocaml/typing/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
+	cp ocaml/driver/*.cmo ocaml/driver/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
+	cp ocaml/middle_end/*.cmo ocaml/middle_end/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
+	cp ocaml/bytecomp/*.cmo ocaml/bytecomp/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
+	cp -r ocaml/lib "$(MAKECONF_SYSROOT)/lib/ocaml/ocamldoc" 2>/dev/null || true
 
 PACKAGE := ocaml-solo5
 .PHONY: install
