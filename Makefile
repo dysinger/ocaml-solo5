@@ -168,11 +168,12 @@ install-ocaml:
 	cp ocaml/bytecomp/*.cmo ocaml/bytecomp/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp -r ocaml/lib "$(MAKECONF_SYSROOT)/lib/ocaml/ocamldoc" 2>/dev/null || true
 	# Create shell wrappers for bytecode tools
+	# Use $(dirname "$0") to find ocamlrun relative to wrapper location
 	(cd "$(MAKECONF_SYSROOT)/bin" && \
 	for tool in ocamlc ocamllex ocamlyacc; do \
 		if [ -f "$$tool.byte" ]; then \
 			echo '#!/usr/bin/env sh' > "$$tool"; \
-			echo 'exec ./ocamlrun ./$$tool.byte "$$@"' >> "$$tool"; \
+			echo 'exec "$(dirname "$0")/ocamlrun" "./$$tool.byte" "$$@"' >> "$$tool"; \
 			chmod +x "$$tool"; \
 		fi \
 	done)
@@ -180,13 +181,13 @@ install-ocaml:
 		cp ocaml/ocamllex "$(MAKECONF_SYSROOT)/bin/ocamllex.byte"; \
 		cp ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/bin/ocamllex.byte"; \
 		echo '#!/usr/bin/env sh' > "$(MAKECONF_SYSROOT)/bin/ocamllex"; \
-		echo 'exec ./ocamlrun ./ocamllex.byte "$$@"' >> "$(MAKECONF_SYSROOT)/bin/ocamllex"; \
+		echo 'exec "$(dirname "$0")/ocamlrun" "./ocamllex.byte" "$$@"' >> "$(MAKECONF_SYSROOT)/bin/ocamllex"; \
 		chmod +x "$(MAKECONF_SYSROOT)/bin/ocamllex"; \
 	fi
 	if [ -f ocaml/yacc/ocamlyacc ]; then \
 		cp ocaml/yacc/ocamlyacc "$(MAKECONF_SYSROOT)/bin/ocamlyacc.byte"; \
 		echo '#!/usr/bin/env sh' > "$(MAKECONF_SYSROOT)/bin/ocamlyacc"; \
-		echo 'exec ./ocamlrun ./ocamlyacc.byte "$$@"' >> "$(MAKECONF_SYSROOT)/bin/ocamlyacc"; \
+		echo 'exec "$(dirname "$0")/ocamlrun" "./ocamlyacc.byte" "$$@"' >> "$(MAKECONF_SYSROOT)/bin/ocamlyacc"; \
 		chmod +x "$(MAKECONF_SYSROOT)/bin/ocamlyacc"; \
 	fi
 
