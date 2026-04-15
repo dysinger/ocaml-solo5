@@ -179,11 +179,15 @@ install-ocaml:
 	if [ -f ocaml/ocamllex ]; then \
 		cp ocaml/ocamllex "$(MAKECONF_SYSROOT)/bin/ocamllex.byte"; \
 		cp ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/bin/ocamllex.byte"; \
-		$(call WRAPPER,ocamllex); \
+		echo '#!/usr/bin/env sh' > "$(MAKECONF_SYSROOT)/bin/ocamllex"; \
+		echo 'exec ./ocamlrun ./ocamllex.byte "$$@"' >> "$(MAKECONF_SYSROOT)/bin/ocamllex"; \
+		chmod +x "$(MAKECONF_SYSROOT)/bin/ocamllex"; \
 	fi
 	if [ -f ocaml/yacc/ocamlyacc ]; then \
 		cp ocaml/yacc/ocamlyacc "$(MAKECONF_SYSROOT)/bin/ocamlyacc.byte"; \
-		$(call WRAPPER,ocamlyacc); \
+		echo '#!/usr/bin/env sh' > "$(MAKECONF_SYSROOT)/bin/ocamlyacc"; \
+		echo 'exec ./ocamlrun ./ocamlyacc.byte "$$@"' >> "$(MAKECONF_SYSROOT)/bin/ocamlyacc"; \
+		chmod +x "$(MAKECONF_SYSROOT)/bin/ocamlyacc"; \
 	fi
 
 PACKAGE := ocaml-solo5
