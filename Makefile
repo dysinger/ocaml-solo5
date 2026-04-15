@@ -127,10 +127,8 @@ $(OCAML_IS_BUILT): ocaml/Makefile.config | _build
 	cd ocaml && \
 	  $(MAKE) runtime-all OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
 	  cp runtime/ocamlrun boot/ocamlrun && \
-	  rm -f stdlib/stdlib.cma && \
-	  $(MAKE) stdlib OCAMLRUN=../runtime/ocamlrun OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
-	  rm -f stdlib/stdlib.cma && \
-	  $(MAKE) stdlib OCAMLRUN=../runtime/ocamlrun OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
+	  $(MAKE) stdlib BOOT_OCAMLC=./boot/ocamlrun OCAMLRUN=./runtime/ocamlrun OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
+	  $(MAKE) stdlib BOOT_OCAMLC=./boot/ocamlrun OCAMLRUN=./runtime/ocamlrun OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
 	  $(MAKE) otherlibs all OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
 	  $(MAKE) runtimeopt OLDS="-o yacc/ocamlyacc -o lex/ocamllex"
 	touch $@
