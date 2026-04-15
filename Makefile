@@ -144,16 +144,14 @@ $(INSTALL_FILES): $(TOOLCHAIN_FINAL)
 	./gen_dot_install.sh $(TOOLCHAIN_FINAL) > $@
 
 # COMMANDS
-# OCaml bytecode tools need shell wrappers to work in nix sandbox
-# Set WRAPPERS=1 to enable portable shell wrappers (for nix compatibility)
-# Otherwise, tools are installed as raw bytecode (for native/non-sandbox builds)
+# Shell wrappers for OCaml bytecode tools - uses #!/usr/bin/env for portability
+# This format works in all environments including sandboxed nix builds
 OCAML_BIN_DIR = "$(MAKECONF_SYSROOT)/bin"
-OCAML_LIB_DIR = "$(MAKECONF_SYSROOT)/lib/ocaml"
 OCAML_RUN = $(OCAML_BIN_DIR)/ocamlrun
 
-define CREATE_WRAPPER
+define WRAPPER
 echo '#!/usr/bin/env sh' > $(OCAML_BIN_DIR)/$(1)
-echo 'exec $(OCAML_RUN) $(OCAML_LIB_DIR)/$(1).byte "$$@"' >> $(OCAML_BIN_DIR)/$(1)
+echo 'exec $(OCAML_RUN) $(OCAML_BIN_DIR)/$(1).byte "$$@"' >> $(OCAML_BIN_DIR)/$(1)
 chmod +x $(OCAML_BIN_DIR)/$(1)
 endef
 
@@ -170,45 +168,27 @@ install-ocaml:
 	cd "$(MAKECONF_SYSROOT)/lib/ocaml/stdlib" && ln -sf ../libcamlrun.a libcamlrun.a
 	# Install OCaml Makefile.config for dune
 	cp ocaml/Makefile.config "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
-	# Install compiler tools - use wrappers if WRAPPERS=1, else raw bytecode
+	# Install compiler tools with portable shell wrappers
 	cp ocaml/utils/*.cmo ocaml/utils/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp ocaml/typing/*.cmo ocaml/typing/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp ocaml/driver/*.cmo ocaml/driver/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp ocaml/middle_end/*.cmo ocaml/middle_end/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp ocaml/bytecomp/*.cmo ocaml/bytecomp/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp -r ocaml/lib "$(MAKECONF_SYSROOT)/lib/ocaml/ocamldoc" 2>/dev/null || true
-	# Copy bytecode tools to lib and optionally create portable wrappers in bin
+	# Create shell wrappers for bytecode tools (in same bin/ location as before)
 	if [ -f ocaml/ocamlc ]; then \
-		cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/lib/ocaml/ocamlc.byte"; \
-		if [ "$(WRAPPERS)" = "1" ]; then \
-			$(call CREATE_WRAPPER,ocamlc); \
-		else \
-			cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/bin/"; \
-		fi \
+		cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/bin/ocamlc.byte"; \
+		$(call WRAPPER,ocamlc); \
 	fi
 	if [ -f ocaml/ocamllex ]; then \
-		cp ocaml/ocamllex "$(MAKECONF_SYSROOT)/lib/ocaml/ocamllex.byte"; \
-		cp ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/lib/ocaml/ocamllex.byte"; \
-		if [ "$(WRAPPERS)" = "1" ]; then \
-			$(call CREATE_WRAPPER,ocamllex); \
-		else \
-			cp ocaml/ocamllex ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/bin/"; \
-		fi \
+		cp ocaml/ocamllex "$(MAKECONF_SYSROOT)/bin/ocamllex.byte"; \
+		cp ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/bin/ocamllex.byte"; \
+		$(call WRAPPER,ocamllex); \
 	fi
 	if [ -f ocaml/yacc/ocamlyacc ]; then \
-		cp ocaml/yacc/ocamlyacc "$(MAKECONF_SYSROOT)/lib/ocaml/ocamlyacc.byte"; \
-		if [ "$(WRAPPERS)" = "1" ]; then \
-			$(call CREATE_WRAPPER,ocamlyacc); \
-		else \
-			cp ocaml/yacc/ocamlyacc "$(MAKECONF_SYSROOT)/bin/"; \
-		fi \
+		cp ocaml/yacc/ocamlyacc "$(MAKECONF_SYSROOT)/bin/ocamlyacc.byte"; \
+		$(call WRAPPER,ocamlyacc); \
 	fi
-	# Copy remaining tools as bytecode with optional wrappers
-	for tool in ocamlobjinfo ocamlprof ocamlcp ocamloptp ocamltop ocamlfindlib; do \
-		if [ -f "ocaml/tools/$$tool" ]; then \
-			cp "ocaml/tools/$$tool" "$(MAKECONF_SYSROOT)/lib/ocaml/$$tool.byte" 2>/dev/null || true; \
-		fi; \
-	done
 
 PACKAGE := ocaml-solo5
 .PHONY: install
