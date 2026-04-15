@@ -144,6 +144,18 @@ $(INSTALL_FILES): $(TOOLCHAIN_FINAL)
 	./gen_dot_install.sh $(TOOLCHAIN_FINAL) > $@
 
 # COMMANDS
+# OCaml bytecode tools need shell wrappers to work in nix sandbox
+# The wrapper format uses #!/usr/bin/env to be portable
+OCAML_BIN_DIR = "$(MAKECONF_SYSROOT)/bin"
+OCAML_LIB_DIR = "$(MAKECONF_SYSROOT)/lib/ocaml"
+OCAML_RUN = $(OCAML_BIN_DIR)/ocamlrun
+
+define CREATE_WRAPPER
+echo '#!/usr/bin/env sh' > $(OCAML_BIN_DIR)/$(1)
+echo 'exec $(OCAML_RUN) $(OCAML_LIB_DIR)/$(1).byte "$$@"' >> $(OCAML_BIN_DIR)/$(1)
+chmod +x $(OCAML_BIN_DIR)/$(1)
+endef
+
 .PHONY: install-ocaml
 install-ocaml:
 	ln -sf "$$(command -v ocamllex)" ocaml/lex/ocamllex
@@ -157,17 +169,34 @@ install-ocaml:
 	cd "$(MAKECONF_SYSROOT)/lib/ocaml/stdlib" && ln -sf ../libcamlrun.a libcamlrun.a
 	# Install OCaml Makefile.config for dune
 	cp ocaml/Makefile.config "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
-	# Install compiler tools (native compiler only, no bytecode since --disable-native-compiler)
-	cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/bin/" 2>/dev/null || true
-	cp ocaml/ocamllex ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/bin/" 2>/dev/null || true
-	cp ocaml/yacc/ocamlyacc "$(MAKECONF_SYSROOT)/bin/" 2>/dev/null || true
-	cp ocaml/tools/*.cmo ocaml/tools/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
+	# Install compiler tools with shell wrappers for nix sandbox compatibility
+	# The tools are bytecode that need ocamlrun - wrap them with #!/usr/bin/env
 	cp ocaml/utils/*.cmo ocaml/utils/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp ocaml/typing/*.cmo ocaml/typing/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp ocaml/driver/*.cmo ocaml/driver/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp ocaml/middle_end/*.cmo ocaml/middle_end/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp ocaml/bytecomp/*.cmo ocaml/bytecomp/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp -r ocaml/lib "$(MAKECONF_SYSROOT)/lib/ocaml/ocamldoc" 2>/dev/null || true
+	# Copy bytecode tools to lib and create portable wrappers in bin
+	if [ -f ocaml/ocamlc ]; then \
+		cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/lib/ocaml/ocamlc.byte"; \
+		$(call CREATE_WRAPPER,ocamlc); \
+	fi
+	if [ -f ocaml/ocamllex ]; then \
+		cp ocaml/ocamllex "$(MAKECONF_SYSROOT)/lib/ocaml/ocamllex.byte"; \
+		cp ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/lib/ocaml/ocamllex.byte"; \
+		$(call CREATE_WRAPPER,ocamllex); \
+	fi
+	if [ -f ocaml/yacc/ocamlyacc ]; then \
+		cp ocaml/yacc/ocamlyacc "$(MAKECONF_SYSROOT)/lib/ocaml/ocamlyacc.byte"; \
+		$(call CREATE_WRAPPER,ocamlyacc); \
+	fi
+	# Copy remaining tools as bytecode with wrappers
+	for tool in ocamlobjinfo ocamlprof ocamlcp ocamloptp ocamltop ocamlfindlib; do \
+		if [ -f "ocaml/tools/$$tool" ]; then \
+			cp "ocaml/tools/$$tool" "$(MAKECONF_SYSROOT)/lib/ocaml/$$tool.byte" 2>/dev/null || true; \
+		fi; \
+	done
 
 PACKAGE := ocaml-solo5
 .PHONY: install
