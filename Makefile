@@ -149,17 +149,11 @@ $(INSTALL_FILES): $(TOOLCHAIN_FINAL)
 install-ocaml:
 	ln -sf "$$(command -v ocamllex)" ocaml/lex/ocamllex
 	ln -sf "$$(command -v ocamlyacc)" ocaml/yacc/ocamlyacc
-	mkdir -p "$(MAKECONF_SYSROOT)/bin" "$(MAKECONF_SYSROOT)/lib/ocaml" "$(MAKECONF_SYSROOT)/lib/ocaml/stublibs" "$(MAKECONF_SYSROOT)/lib/ocaml/compiler-libs" "$(MAKECONF_SYSROOT)/lib/ocaml/caml" "$(MAKECONF_SYSROOT)/lib/ocaml/profiling"
+	mkdir -p "$(MAKECONF_SYSROOT)/bin" "$(MAKECONF_SYSROOT)/lib/ocaml" "$(MAKECONF_SYSROOT)/lib/ocaml/caml"
 	cp ocaml/runtime/ocamlrun "$(MAKECONF_SYSROOT)/bin/"
 	cp ocaml/runtime/ld.conf ocaml/runtime/libcamlrun.a "$(MAKECONF_SYSROOT)/lib/ocaml/"
 	cp ocaml/runtime/caml/*.h "$(MAKECONF_SYSROOT)/lib/ocaml/caml/"
-	if [ -f ocaml/ocaml ] ; then cp ocaml/ocaml "$(MAKECONF_SYSROOT)/bin/" ; fi
-	if [ -f ocaml/ocamlc ] ; then cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/bin/" ; fi
-	if [ -f ocaml/ocamlopt ] ; then cp ocaml/ocamlopt "$(MAKECONF_SYSROOT)/bin/" ; fi
-	if [ -f ocaml/ocamlfind ] ; then cp ocaml/ocamlfind "$(MAKECONF_SYSROOT)/bin/" ; fi
 	cp -r ocaml/stdlib "$(MAKECONF_SYSROOT)/lib/ocaml/"
-	cp -r ocaml/otherlibs/* "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
-	cp -r ocaml/compiler-libs/* "$(MAKECONF_SYSROOT)/lib/ocaml/compiler-libs/" 2>/dev/null || true
 
 PACKAGE := ocaml-solo5
 .PHONY: install
