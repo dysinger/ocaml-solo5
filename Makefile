@@ -127,7 +127,7 @@ $(OCAML_IS_BUILT): ocaml/Makefile.config | _build
 	PATH="$$PWD/$(TOOLDIR_FOR_BUILD):$$PATH" ; \
 	cd ocaml && \
 	  $(MAKE) coldstart OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
-	  $(MAKE) coreall OCAMLRUN=./boot/ocamlrun OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
+	  $(MAKE) coreall BOOT_OCAMLC=./boot/ocamlrun OCAMLRUN=./boot/ocamlrun OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
 	  $(MAKE) otherlibs OLDS="-o yacc/ocamlyacc -o lex/ocamllex"
 	touch $@
 
