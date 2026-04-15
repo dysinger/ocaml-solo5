@@ -145,15 +145,7 @@ $(INSTALL_FILES): $(TOOLCHAIN_FINAL)
 
 # COMMANDS
 # Shell wrappers for OCaml bytecode tools - uses #!/usr/bin/env for portability
-# This format works in all environments including sandboxed nix builds
 OCAML_BIN_DIR = "$(MAKECONF_SYSROOT)/bin"
-OCAML_RUN = $(OCAML_BIN_DIR)/ocamlrun
-
-define WRAPPER
-echo '#!/usr/bin/env sh' > $(OCAML_BIN_DIR)/$(1)
-echo 'exec $(OCAML_RUN) $(OCAML_BIN_DIR)/$(1).byte "$$@"' >> $(OCAML_BIN_DIR)/$(1)
-chmod +x $(OCAML_BIN_DIR)/$(1)
-endef
 
 .PHONY: install-ocaml
 install-ocaml:
@@ -175,11 +167,15 @@ install-ocaml:
 	cp ocaml/middle_end/*.cmo ocaml/middle_end/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp ocaml/bytecomp/*.cmo ocaml/bytecomp/*.cmi "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
 	cp -r ocaml/lib "$(MAKECONF_SYSROOT)/lib/ocaml/ocamldoc" 2>/dev/null || true
-	# Create shell wrappers for bytecode tools (in same bin/ location as before)
-	if [ -f ocaml/ocamlc ]; then \
-		cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/bin/ocamlc.byte"; \
-		$(call WRAPPER,ocamlc); \
-	fi
+	# Create shell wrappers for bytecode tools
+	(cd "$(MAKECONF_SYSROOT)/bin" && \
+	for tool in ocamlc ocamllex ocamlyacc; do \
+		if [ -f "$$tool.byte" ]; then \
+			echo '#!/usr/bin/env sh' > "$$tool"; \
+			echo 'exec ./ocamlrun ./$$tool.byte "$$@"' >> "$$tool"; \
+			chmod +x "$$tool"; \
+		fi \
+	done)
 	if [ -f ocaml/ocamllex ]; then \
 		cp ocaml/ocamllex "$(MAKECONF_SYSROOT)/bin/ocamllex.byte"; \
 		cp ocaml/lex/ocamllex "$(MAKECONF_SYSROOT)/bin/ocamllex.byte"; \
