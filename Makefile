@@ -130,6 +130,7 @@ $(OCAML_IS_BUILT): ocaml/Makefile.config | _build
 	  cp runtime/ocamlrun boot/ocamlrun && \
 	  rm -f stdlib/*.cmi stdlib/*.cmo && \
 	  $(MAKE) stdlib BOOT_OCAMLC=./boot/ocamlrun OCAMLRUN=./runtime/ocamlrun OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
+	  $(MAKE) ocamlc OCAMLC=./boot/ocamlrun OLDS="-o yacc/ocamlyacc -o lex/ocamllex" && \
 	  $(MAKE) otherlibs OLDS="-o yacc/ocamlyacc -o lex/ocamllex"
 	touch $@
 
@@ -156,13 +157,13 @@ install-ocaml:
 	cp ocaml/runtime/ocamlrun "$(MAKECONF_SYSROOT)/bin/"
 	cp ocaml/runtime/ld.conf ocaml/runtime/libcamlrun.a "$(MAKECONF_SYSROOT)/lib/ocaml/"
 	cp ocaml/runtime/caml/*.h "$(MAKECONF_SYSROOT)/lib/ocaml/caml/"
-	cp ocaml/ocaml "$(MAKECONF_SYSROOT)/bin/"
-	cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/bin/"
-	cp ocaml/ocamlopt "$(MAKECONF_SYSROOT)/bin/"
-	cp ocaml/ocamlfind "$(MAKECONF_SYSROOT)/bin/"
+	if [ -f ocaml/ocaml ] ; then cp ocaml/ocaml "$(MAKECONF_SYSROOT)/bin/" ; fi
+	if [ -f ocaml/ocamlc ] ; then cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/bin/" ; fi
+	if [ -f ocaml/ocamlopt ] ; then cp ocaml/ocamlopt "$(MAKECONF_SYSROOT)/bin/" ; fi
+	if [ -f ocaml/ocamlfind ] ; then cp ocaml/ocamlfind "$(MAKECONF_SYSROOT)/bin/" ; fi
 	cp -r ocaml/stdlib "$(MAKECONF_SYSROOT)/lib/ocaml/"
 	cp -r ocaml/otherlibs/* "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
-	cp -r ocaml/compiler-libs/* "$(MAKECONF_SYSROOT)/lib/ocaml/compiler-libs/"
+	cp -r ocaml/compiler-libs/* "$(MAKECONF_SYSROOT)/lib/ocaml/compiler-libs/" 2>/dev/null || true
 
 PACKAGE := ocaml-solo5
 .PHONY: install
