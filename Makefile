@@ -151,9 +151,11 @@ install-ocaml:
 	ln -sf "$$(command -v ocamlyacc)" ocaml/yacc/ocamlyacc
 	mkdir -p "$(MAKECONF_SYSROOT)/bin" "$(MAKECONF_SYSROOT)/lib/ocaml" "$(MAKECONF_SYSROOT)/lib/ocaml/caml"
 	cp ocaml/runtime/ocamlrun "$(MAKECONF_SYSROOT)/bin/"
-	cp ocaml/runtime/ld.conf ocaml/runtime/libcamlrun.a "$(MAKECONF_SYSROOT)/lib/ocaml/"
+	cp ocaml/runtime/ld.conf "$(MAKECONF_SYSROOT)/lib/ocaml/"
+	cp ocaml/runtime/libcamlrun.a "$(MAKECONF_SYSROOT)/lib/ocaml/"
 	cp ocaml/runtime/caml/*.h "$(MAKECONF_SYSROOT)/lib/ocaml/caml/"
 	cp -r ocaml/stdlib "$(MAKECONF_SYSROOT)/lib/ocaml/"
+	cd "$(MAKECONF_SYSROOT)/lib/ocaml/stdlib" && ln -sf ../libcamlrun.a libcamlrun.a
 
 PACKAGE := ocaml-solo5
 .PHONY: install
