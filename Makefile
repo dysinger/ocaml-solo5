@@ -119,6 +119,7 @@ ocaml/Makefile.config: $(LIBS) $(TOOLCHAIN_FOR_BUILD) | ocaml
 		--disable-ocamldoc \
 		--without-zstd \
 		--disable-native-compiler \
+		--disable-installing \
 		$(MAKECONF_OCAML_CONFIGURE_OPTIONS)
 
 OCAML_IS_BUILT := _build/ocaml_is_built
@@ -151,7 +152,17 @@ $(INSTALL_FILES): $(TOOLCHAIN_FINAL)
 install-ocaml:
 	ln -sf "$$(command -v ocamllex)" ocaml/lex/ocamllex
 	ln -sf "$$(command -v ocamlyacc)" ocaml/yacc/ocamlyacc
-	$(MAKE) -C ocaml installcross
+	mkdir -p "$(MAKECONF_SYSROOT)/bin" "$(MAKECONF_SYSROOT)/lib/ocaml" "$(MAKECONF_SYSROOT)/lib/ocaml/stublibs" "$(MAKECONF_SYSROOT)/lib/ocaml/compiler-libs" "$(MAKECONF_SYSROOT)/lib/ocaml/caml" "$(MAKECONF_SYSROOT)/lib/ocaml/profiling"
+	cp ocaml/runtime/ocamlrun "$(MAKECONF_SYSROOT)/bin/"
+	cp ocaml/runtime/ld.conf ocaml/runtime/libcamlrun.a "$(MAKECONF_SYSROOT)/lib/ocaml/"
+	cp ocaml/runtime/caml/*.h "$(MAKECONF_SYSROOT)/lib/ocaml/caml/"
+	cp ocaml/ocaml "$(MAKECONF_SYSROOT)/bin/"
+	cp ocaml/ocamlc "$(MAKECONF_SYSROOT)/bin/"
+	cp ocaml/ocamlopt "$(MAKECONF_SYSROOT)/bin/"
+	cp ocaml/ocamlfind "$(MAKECONF_SYSROOT)/bin/"
+	cp -r ocaml/stdlib "$(MAKECONF_SYSROOT)/lib/ocaml/"
+	cp -r ocaml/otherlibs/* "$(MAKECONF_SYSROOT)/lib/ocaml/" 2>/dev/null || true
+	cp -r ocaml/compiler-libs/* "$(MAKECONF_SYSROOT)/lib/ocaml/compiler-libs/"
 
 PACKAGE := ocaml-solo5
 .PHONY: install
